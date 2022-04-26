@@ -1,1 +1,129 @@
-{"nbformat":4,"nbformat_minor":0,"metadata":{"colab":{"name":"prepare_data.py","provenance":[],"collapsed_sections":[],"authorship_tag":"ABX9TyPL7zU1w1idL7ydG/tgpCoO"},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"cells":[{"cell_type":"code","execution_count":4,"metadata":{"colab":{"base_uri":"https://localhost:8080/"},"id":"PpGeSvtzdGf6","executionInfo":{"status":"ok","timestamp":1650958665175,"user_tz":-540,"elapsed":24241,"user":{"displayName":"권혁종","userId":"07484803130759059282"}},"outputId":"f747d27e-9262-47fd-cd17-4790c7c5d8a3"},"outputs":[{"output_type":"stream","name":"stdout","text":["Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount(\"/content/drive\", force_remount=True).\n"]}],"source":["%tensorflow_version 1.x\n","\n","from google.colab import drive\n","drive.mount('/content/drive')\n","import sys\n","sys.path.append('/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset')\n","import os, re\n","import argparse\n","# get tokenizer python script\n","from tokenizationK import FullTokenizer\n","tokenizer = FullTokenizer(vocab_file=\"/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset/vocab.korean.rawtext.list\")\n","\n","slot_pattern = re.compile('/(.+?);(.+?)/')\n","multi_spaces = re.compile('\\s+')\n","\n","def process_file(file_path, output_dir):\n","  if not os.path.isdir(output_dir):\n","    os.mkdir(output_dir)\n","  \n","  data = open(file_path).read().splitlines()\n","\n","  ## line별로 processing\n","  processed_data = [process_line(line, tokenizer) for line in data]\n","\n","\n","  ## ----------------- 문제 2 ---------------- ##\n","  tokens = list(map(lambda  x : x[0],processed_data))\n","  tags = list(map(lambda  x : x[1],processed_data))\n","  ## ---------------------------------------- ##\n","\n","  ## seq_in : 토큰들로만 이루어진 파일\n","  ## seq_out : 태그들로만 이루어진 파일\n","  seq_in = os.path.join(output_dir, \"seq.in\")\n","  seq_out = os.path.join(output_dir, \"seq.out\")\n","\n","  with open(seq_in, \"w\") as f:\n","    f.write(\"\\n\".join(tokens)+ \"\\n\")\n","\n","  with open(seq_out, \"w\") as f:\n","    f.write(\"\\n\".join(tags)+ \"\\n\")\n","\n","def process_line(sentence, tokenizer):\n","  slot_pattern_found = slot_pattern.findall(sentence)\n","  line_refined = slot_pattern.sub(\"/슬롯/\", sentence)\n","  tokens = \"\"\n","  tags = \"\"\n","  slot_index = 0\n","\n","  for word in line_refined.split():\n","    ## \"/게임명;일곱개의 대죄/\" --> (\"게임명\", \"일곱개의 대죄\")\n","    if word.startswith(\"/\"):\n","      slot, entity = slot_pattern_found[slot_index]\n","      slot_index += 1\n","\n","      # 줄 들여쓰기가 잘못되어있는거 같아 한칸 뒤로 밈\n","      ## 엔티티를 토크나이즈 한 후, 토큰별로 태그를 추가해준다. \n","      entity_tokens = \" \".join(tokenizer.tokenize(entity))\n","\n","      tokens += entity_tokens + \" \"\n","      tags += (slot + \" \") * len(entity_tokens.split())\n","\n","      ## 조사가 붙은 것이며(eg. \"/슬롯/이\", \"/슬롯/에서\"),\n","      ## 조사에 대해서 추가적으로 토큰 및 태그를 추가해 준다.\n","      if not word.endswith(\"/\"):\n","        ## 우선 \"/\" 뒤에 오는 조사를 찾아 준다.\n","        josa = word[word.rfind(\"/\")+1:]\n","        josa_tokens = \" \".join(tokenizer.tokenize(josa))\n","\n","        tokens += josa_tokens + \" \"\n","        tags += \"O \" * len(josa_tokens.split())\n","    \n","    elif \"/\" in word:\n","      prefix = word.split(\"/\")[0]\n","      tokenized_prefix = \" \".join(tokenizer.tokenize(prefix))\n","      tokens += tokenized_prefix + \" \"\n","      tags += \"O \" * len(tokenized_prefix.split())\n","\n","      slot, entity = slot_pattern_found[slot_index]\n","      slot_index += 1\n","\n","      entity_tokens = \" \".join(tokenizer.tokenize(entity))\n","\n","      tokens += entity_tokens + \" \"\n","      tags += (slot + \" \") * len(entity_tokens.split())\n","\n","    else:\n","      word_tokens = \" \".join(tokenizer.tokenize(word))\n","      tokens += word_tokens + \" \"\n","      tags += \"O \" * len(word_tokens.split())\n","  \n","  tokens = multi_spaces.sub(\" \", tokens.strip())\n","  tags = multi_spaces.sub(\" \", tags.strip())\n","\n","  ## 만일 토큰의 개수와 슬롯의 개수가 맞지 않다면 본래 라인과 더불어 토큰/슬롯들을 프린트해준다.\n","  ## ----------------- 문제 3 ---------------- ##\n","  if len(tokens.split()) != len(tags.split()):    \n","        print(sentence)\n","        print(\"\\t\" + tokens + \"\\t\", len(tokens.split()))\n","        print(\"\\t\" + tags + \"\\t\", len(tags.split()))\n","  ## ---------------------------------------- ##\n","  \n","  return tokens, tags\n","\n","if __name__ == \"__main__\":\n","  parser = argparse.ArgumentParser(description='seq_in, seq_out 만들기')\n","\n","  # 입력받을 인자값 등록\n","  parser.add_argument(\"--file_path\", \"-f\", help = \"data.txt file path\", type = str, required=True)\n","  parser.add_argument(\"--output_dir\", \"-o\", help = \"output_dir\", type = str, required=True)\n","  \n","  # 입력받은 인자값을 args에 저장 (type: namespace)\n","  args = parser.parse_args()\n","\n","  file_path = args.file_path\n","  output_dir = args.output_dir\n","\n","  process_file(file_path, output_dir)"]}]}
+# -*- coding: utf-8 -*-
+
+import os, re
+import argparse
+import sys
+sys.path.append('/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset')
+from tokenizationK import FullTokenizer
+
+import pdb
+
+############################################## TODO 경로 고치기 ###############################################
+tokenizer = FullTokenizer(vocab_file="/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset/vocab.korean.rawtext.list")
+###############################################################################################################
+
+# "/인물;한지민/과 /인물;한예슬/ 나오는 드라마 있어?"와 같은 예시처럼
+# 해당 데이터에서는 "/슬롯(레이블)명;엔티티/"의 형식으로 슬롯과 엔티티를 정리해 놨으므로,
+# 이를 잡아 줄 수 있는 정규표현식을 준비한다.
+
+slot_pattern = re.compile('/(.+?);(.+?)/')
+multi_spaces = re.compile('\s+')
+
+
+def process_file(file_path, output_dir):
+    """
+    단방향 데이터가 있는 file_path을 argument로 주면 가공을 한 이후에
+    output_dir 아래에 2개의 파일(seq.in, seq.out)을 저장해 주는 함수.
+    """
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
+
+    data = open(file_path).read().splitlines()
+
+    # line별로 process를 해준 뒤,
+    processed_data = [process_line(line, tokenizer) for line in data]
+    tokens = list(map(lambda  x : x[0],processed_data))
+    tags = list(map(lambda  x : x[1],processed_data))
+
+    # seq_in : 토큰들로만 이루어진 파일
+    # seq_out : 태그들로만 이루어진 파일
+    seq_in = os.path.join(output_dir, "seq.in")
+    seq_out = os.path.join(output_dir, "seq.out")
+
+    with open(seq_in, "w") as f:
+        f.write("\n".join(tokens)+ "\n")
+
+    with open(seq_out, "w") as f:
+        f.write("\n".join(tags)+ "\n")
+
+
+def process_line(sentence, tokenizer):
+    """
+    데이터를 라인별로 처리해 주는 함수이다.
+    라인을 주게 되면, (토큰, 슬롯)
+
+    예를 들어 "/인물;한지민/과 /인물;한예슬/ 나오는 드라마 있어?" 같은 input을 받게 되면,
+        ('한 지민 과 한예 슬 나오 는 드라마 있 어 ?', '인물 인물 O 인물 인물 O O O O O O')와 같은 (토큰, 태그)쌍으로 된 결과값을 반환한다.
+    """
+    slot_pattern_found = slot_pattern.findall(sentence)
+    line_refined = slot_pattern.sub("/슬롯/", sentence)
+    tokens = ""
+    tags = ""
+    slot_index = 0
+
+    for word in line_refined.split():
+        # "/게임명;일곱개의 대죄/" --> ("게임명", "일곱개의 대죄")
+        if word.startswith("/"):
+            slot, entity = slot_pattern_found[slot_index]
+            slot_index += 1
+
+            # 엔티티를 토크나이즈 한 후, 토큰별로 태그를 추가해 준다.
+            entity_tokens = " ".join(tokenizer.tokenize(entity))
+
+            tokens += entity_tokens + " "
+            tags += (slot + " ") * len(entity_tokens.split())
+
+            # 조사가 붙은 것이며(eg. "/슬롯/이", "/슬롯/에서"),
+            # 조사에 대해서 추가적으로 토큰 및 태그를 추가해 준다.
+            if not word.endswith("/"):
+                # 우선 "/" 뒤에 오는 조사를 찾아 주고
+                josa = word[word.rfind("/")+1:]
+                josa_tokens = " ".join(tokenizer.tokenize(josa))
+
+                tokens += josa_tokens + " "
+                tags += "O " * len(josa_tokens.split())
+            
+        elif "/" in word:
+
+            prefix = word.split("/")[0]
+            tokenized_prefix = " ".join(tokenizer.tokenize(prefix))
+            tokens += tokenized_prefix + " "
+            tags += "O " * len(tokenized_prefix.split())
+
+            slot, entity = slot_pattern_found[slot_index]
+            slot_index += 1
+
+            entity_tokens = " ".join(tokenizer.tokenize(entity))
+
+            tokens += entity_tokens + " "
+            tags += (slot + " ") * len(entity_tokens.split())
+
+        else:
+            word_tokens = " ".join(tokenizer.tokenize(word))
+
+            tokens += word_tokens + " "
+            tags += "O " * len(word_tokens.split())
+
+    tokens = multi_spaces.sub(" ", tokens.strip())
+    tags = multi_spaces.sub(" ", tags.strip())
+
+    # 만일 토큰의 개수와 슬롯의 개수가 맞지 않다면 본래 라인과 더불어 토큰/슬롯들을 프린트해준다.
+    ## [ 코드를 작성해주세요 ]
+    if len(tokens.split()) != len(tags.split()):
+        print(sentence)
+        print("\t" + tokens + "\t", len(tokens.split()))
+        print("\t" + tags + "\t", len(tags.split()))
+
+    return tokens, tags
+
+
+if __name__ == "__main__":
+   parser = argparse.ArgumentParser()
+   parser.add_argument("--file_path", "-f", help = "data.txt file path", type = str, required=True)
+   parser.add_argument("--output_dir", "-o", help = "output_dir", type = str, required=True)
+    
+   args = parser.parse_args()
+   file_path = args.file_path
+   output_dir = args.output_dir
+
+   process_file(file_path, output_dir)
