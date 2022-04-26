@@ -1,0 +1,7 @@
+__pycache__/
+.DS_STORE
+001_bert_morp_pytorch/
+002_bert_morp_tensorflow/
+003_bert_eojeol_pytorch/
+004_bert_eojeol_tensorflow/
+bert-module/
