@@ -3,9 +3,7 @@
 import os, re
 import argparse
 import sys
-sys.path.append('/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset')
 from tokenizationK import FullTokenizer
-
 import pdb
 
 ############################################## TODO 경로 고치기 ###############################################

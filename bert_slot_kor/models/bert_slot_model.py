@@ -151,6 +151,16 @@ class BertSlotModel:
 
     def visualize_log(self, history_dic, metric_name):
 ############################################## TODO ####################
-        print(None)
+        print("visualizing_log...")
+        loss = history_dic['loss']
+        val_loss = history_dic['val_loss']
+        epochs = range(1, len(loss) + 1)
+        plt.figure(figsize=(20,20))
+        plt.plot(epochs, loss, 'bo', label='Training loss')
+        plt.plot(epochs, val_loss, 'b', label='Validation loss')
+        plt.title('Training and validation loss')
+        plt.legend()
+        plt.savefig("/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset/saved_model/loss_plot.png")
+        print('save_plot')
 # history_dict에 기록된 loss 변화 추이를 이미지로 저장하는 함수 만들기
 ########################################################################

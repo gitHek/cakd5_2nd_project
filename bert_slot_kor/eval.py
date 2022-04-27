@@ -75,16 +75,17 @@ if __name__ == "__main__":
     
     input_ids, input_mask, segment_ids = bert_to_array.transform(text_arr)
     
-    tags_to_array = TagsToArray()
-    tags_to_array.fit(tags_arr)
+    # tags_to_array = TagsToArray()
+    # tags_to_array.fit(tags_arr)
+    data_tags_arr = tags_arr
+    # data_tags_arr = tags_to_array.transform(tags_arr, input_ids)
     
-    data_tags_arr = tags_to_array.transform(tags_arr, input_ids)
     print("tags :", data_tags_arr[0:2])
     
     print("input shape :", input_ids.shape, input_ids[0:2])
     print("t_input_mask :", input_mask.shape, input_mask[0:2])
     print("t_segment_ids :", segment_ids.shape, segment_ids[0:2])
-    print("data_tags_arr :", data_tags_arr.shape, data_tags_arr[0:2])
+    print("data_tags_arr :", len(data_tags_arr), data_tags_arr[0:2])
     ########################################################################
     
     def get_results(input_ids, input_mask, segment_ids, tags_arr, tags_to_array):
@@ -92,7 +93,9 @@ if __name__ == "__main__":
                                                           input_mask,
                                                           segment_ids],
                                                          tags_to_array)
+        
         gold_tags = [x.split() for x in tags_arr]
+        # x.split()을 x.tostring().split()으로 변환
 
         f1_score = metrics.f1_score(flatten(gold_tags), flatten(inferred_tags),
                                     average="micro")
