@@ -109,7 +109,12 @@ class BertSlotModel:
        
 
 ############################################## TODO ####################
-        slots_score = [y_slots[i].max() for i in range(y_slots.shape[0])]
+        slots_score = []
+        for i in range(len(y_slots)):
+            slot_score = []
+            for j in range(len(y_slots[i])):
+                slot_score.append(y_slots[i][j].max())
+            slots_score.append(slot_score)
 # 지금은 slots_score가 None으로 이루어진 행렬입니다. 아래의 예시를 바탕으로 y_slots를 이용하여 slots_score를 만들어보세요.
 # 예시)
 #           입력 문장: 아이유 노래 재생

@@ -119,7 +119,7 @@ def process_line(sentence, tokenizer):
 
 if __name__ == "__main__":
    parser = argparse.ArgumentParser()
-   parser.add_argument("--file_path", "-f", help = "data.txt file path", type = str, required=True)
+   parser.add_argument("--file_path", "-i", help = "data.txt file path", type = str, required=True)
    parser.add_argument("--output_dir", "-o", help = "output_dir", type = str, required=True)
     
    args = parser.parse_args()

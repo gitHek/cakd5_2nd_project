@@ -110,11 +110,6 @@ if __name__ == "__main__":
         tags_to_array.fit(val_tags_arr)
         val_tags = tags_to_array.transform(val_tags_arr, val_input_ids)
         print("val_tags :", val_tags[0:2])
-        slots_num = len(tags_to_array.label_encoder.classes_)
-        print("slot num :", slots_num, tags_to_array.label_encoder.classes_)
-        
-        model = BertSlotModel(slots_num, bert_model_hub_path, sess,
-                            num_bert_fine_tune_layers=10)
         
         print("validation input shape :", val_input_ids.shape, val_input_ids[0:2])
         print("val_input_mask :", val_input_mask.shape, val_input_mask[0:2])
@@ -142,7 +137,8 @@ if __name__ == "__main__":
         print("Folder `%s` created" % save_folder_path)
     model.save(save_folder_path)
     tags_to_array_path = os.path.join(save_folder_path, "tags_to_array.pkl")
-    with open(os.path.join(tags_to_array_path, "wb")) as handle:
+    # 경로가 이상해서 수정함
+    with open(tags_to_array_path, "wb") as handle:
         pickle.dump(tags_to_array, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
     tf.compat.v1.reset_default_graph()
