@@ -57,7 +57,7 @@ if __name__ == "__main__":
     sess = tf.compat.v1.Session(config=config)
     
     ############################### TODO 경로 고치기 ###################
-    bert_model_hub_path = "/content/drive/MyDrive/bert-module"
+    bert_model_hub_path = "/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset/model"
     ####################################################################
     bert_vocab_path = os.path.join(bert_model_hub_path,
                                    "assets/vocab.korean.rawtext.list")
@@ -75,6 +75,7 @@ if __name__ == "__main__":
     
     tags_to_array = TagsToArray()
     tags_to_array.fit(train_tags_arr)
+    
     train_tags = tags_to_array.transform(train_tags_arr, t_input_ids)
     print("train_tags :", train_tags[0:2])
     slots_num = len(tags_to_array.label_encoder.classes_)
@@ -93,8 +94,38 @@ if __name__ == "__main__":
     ############################### TODO ###############################
         # validation data 불러오기
         # train set과 validation set을 둘 다 넣어서 model.fit 하기
+        
         print("reading validation set")
+        val_text_arr, val_tags_arr = Reader.read(val_data_folder_path)
+    
+        print("val_text_arr[0:2] :", val_text_arr[0:2])
+        print("val_tags_arr[0:2] :", val_tags_arr[0:2])
+        
+        bert_to_array = BERTToArray(bert_vocab_path) 
+        # bert_to_array MUST NOT tokenize input !!!
+        
+        val_input_ids, val_input_mask, val_segment_ids = bert_to_array.transform(val_text_arr)
+        
+        tags_to_array = TagsToArray()
+        tags_to_array.fit(val_tags_arr)
+        val_tags = tags_to_array.transform(val_tags_arr, val_input_ids)
+        print("val_tags :", val_tags[0:2])
+        slots_num = len(tags_to_array.label_encoder.classes_)
+        print("slot num :", slots_num, tags_to_array.label_encoder.classes_)
+        
+        model = BertSlotModel(slots_num, bert_model_hub_path, sess,
+                            num_bert_fine_tune_layers=10)
+        
+        print("validation input shape :", val_input_ids.shape, val_input_ids[0:2])
+        print("val_input_mask :", val_input_mask.shape, val_input_mask[0:2])
+        print("val_segment_ids :", val_segment_ids.shape, val_segment_ids[0:2])
+        print("val_tags :", val_tags.shape, val_tags[0:2])
+        
         print("training model ...")
+        model.fit([t_input_ids, t_input_mask, t_segment_ids],
+                  train_tags,
+                  validation_data= ([val_input_ids,val_input_mask,val_segment_ids],val_tags),
+                  epochs=epochs, batch_size=batch_size)
     ####################################################################
 
     else:

@@ -9,6 +9,7 @@ from sklearn import metrics
 
 from utils import Reader
 from to_array.bert_to_array import BERTToArray
+from to_array.tags_to_array import TagsToArray
 from models.bert_slot_model import BertSlotModel
 from utils import flatten
 
@@ -40,7 +41,7 @@ if __name__ == "__main__":
     
     
     #################################### TODO 경로 고치기 ##################
-    bert_model_hub_path = "/content/drive/MyDrive/bert-module"
+    bert_model_hub_path = "/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset/model"
     ########################################################################
     
     vocab_file = os.path.join(bert_model_hub_path,
@@ -61,6 +62,29 @@ if __name__ == "__main__":
     
     #################################### TODO #############################
     # test set 데이터 불러오기
+    print("reading test set")
+    bert_vocab_path = os.path.join(bert_model_hub_path,
+                                   "assets/vocab.korean.rawtext.list")
+    text_arr, tags_arr = Reader.read(data_folder_path)
+    
+    print("text_arr[0:2] :", text_arr[0:2])
+    print("tags_arr[0:2] :", tags_arr[0:2])
+    
+    bert_to_array = BERTToArray(bert_vocab_path) 
+    # bert_to_array MUST NOT tokenize input !!!
+    
+    input_ids, input_mask, segment_ids = bert_to_array.transform(text_arr)
+    
+    tags_to_array = TagsToArray()
+    tags_to_array.fit(tags_arr)
+    
+    data_tags_arr = tags_to_array.transform(tags_arr, input_ids)
+    print("tags :", data_tags_arr[0:2])
+    
+    print("input shape :", input_ids.shape, input_ids[0:2])
+    print("t_input_mask :", input_mask.shape, input_mask[0:2])
+    print("t_segment_ids :", segment_ids.shape, segment_ids[0:2])
+    print("data_tags_arr :", data_tags_arr.shape, data_tags_arr[0:2])
     ########################################################################
     
     def get_results(input_ids, input_mask, segment_ids, tags_arr, tags_to_array):

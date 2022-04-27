@@ -10,7 +10,7 @@ from to_array import tokenizationK as tk
 
 class BERTToArray:
     
-    def __init__(self
+    def __init__(self,
                  bert_vocab_path="./bert-module/assets/vocab.korean.rawtext.list"):
         self.tokenizer = tk.FullTokenizer(bert_vocab_path)
     
