@@ -160,6 +160,7 @@ class BertSlotModel:
         plt.plot(epochs, val_loss, 'b', label='Validation loss')
         plt.title('Training and validation loss')
         plt.legend()
+        # 경로 각자 맞춰서 수정
         plt.savefig("/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset/saved_model/loss_plot.png")
         print('save_plot')
 # history_dict에 기록된 loss 변화 추이를 이미지로 저장하는 함수 만들기
