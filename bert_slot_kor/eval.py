@@ -12,7 +12,7 @@ from to_array.bert_to_array import BERTToArray
 from to_array.tags_to_array import TagsToArray
 from models.bert_slot_model import BertSlotModel
 from utils import flatten
-
+import numpy as np
 
 if __name__ == "__main__":
     # Reads command-line parameters
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     print("input shape :", input_ids.shape, input_ids[0:2])
     print("t_input_mask :", input_mask.shape, input_mask[0:2])
     print("t_segment_ids :", segment_ids.shape, segment_ids[0:2])
-    print("data_tags_arr :", len(data_tags_arr), data_tags_arr[0:2])
+    print("data_tags_arr :", np.array(data_tags_arr).shape, data_tags_arr[0:2])
     ########################################################################
     
     def get_results(input_ids, input_mask, segment_ids, tags_arr, tags_to_array):
