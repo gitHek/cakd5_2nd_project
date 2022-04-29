@@ -12,7 +12,6 @@ from to_array.bert_to_array import BERTToArray
 from to_array.tags_to_array import TagsToArray
 from models.bert_slot_model import BertSlotModel
 import re
-from prepare_data import process_line
 ###############################################################################
 
 import tensorflow as tf
@@ -46,8 +45,6 @@ if __name__ == "__main__":
     ############################### TODO ###############################
     # 모델과 기타 필요한 것들 불러오기
     tokenizer = FullTokenizer(vocab_file="/content/drive/MyDrive/Colab_Notebooks/2nd_project/dataset/vocab.korean.rawtext.list")
-    slot_pattern = re.compile('/(.+?);(.+?)/')
-    multi_spaces = re.compile('\s+')
     vocab_file = os.path.join(bert_model_hub_path,"assets/vocab.korean.rawtext.list")
     bert_to_array = BERTToArray(vocab_file)
 
@@ -75,7 +72,7 @@ if __name__ == "__main__":
         if input_text == "quit":
             break
         else:
-            text_arr = process_line(input_text,tokenizer)[0]
+            text_arr = tokenizer.tokenize(input_text)
             input_ids, input_mask, segment_ids = bert_to_array.transform([' '.join(text_arr)])
             inferred_tags, slots_score = model.predict_slots([input_ids,input_mask,segment_ids],tags_to_array)
             print(text_arr)
