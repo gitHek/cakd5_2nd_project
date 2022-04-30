@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, request
+from flask_ngrok import run_with_ngrok
 import os
 
 app = Flask(__name__)
-app.static_folder = 'static'
 
+app.static_folder = 'static'
+# app.template_folder = 'templates'
+run_with_ngrok(app)
 @app.route("/")
 def home():
     return render_template("index.html")

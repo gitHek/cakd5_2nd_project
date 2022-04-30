@@ -4,5 +4,7 @@
 from app.main import app
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
-    
+    # 코랩용
+    app.run()
+    # 로컬용 
+    # app.run(port=6006, debug=True)
