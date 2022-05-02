@@ -1,9 +1,12 @@
 :root {
+    /*======================= TODO =======================*/
+    /* 요소 색상 변경 (변수 설정) */
     --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     --msger-bg: #fff;
     --border: 2px solid #ddd;
     --left-msg-bg: #fff1f0;
     --right-msg-bg: #ffc0cb;
+    /*====================================================*/
   }
   
   html {
@@ -43,21 +46,24 @@
   
   .msger-header {
     /* display: flex; */
-    font-size: medium;
+    font-size: x-large;
     justify-content: space-between;
     padding: 10px;
     text-align: center;
     border-bottom: var(--border);
-    background: #eee;
-    color: #666;
+    background: #d42edf;
+    color: #f6e6a8;
   }
   
   .msger-chat {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
-    background-image: url('https://i.pinimg.com/originals/f5/05/24/f50524ee5f161f437400aaf215c9e12f.jpg');
+    /*======================= TODO =======================*/
+    /* 배경화면 설정 */
+    background-image: url('https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/red-wine-benefits-1592243220.jpg');
     background-size: cover;
+    /*====================================================*/
   }
   .msger-chat::-webkit-scrollbar {
     width: 6px;
@@ -112,7 +118,7 @@
     flex-direction: row-reverse;
   }
   .right-msg .msg-bubble {
-    background: var(--right-msg-bg);
+    background: #ec92a2;
     color: #fff;
     border-bottom-right-radius: 0;
   }
@@ -136,18 +142,23 @@
     flex: 1;
     background: #ddd;
   }
+  /*======================= TODO =======================*/
+  /* 버튼 색상 변경 */
   .msger-send-btn {
     margin-left: 10px;
-    background: #ffc0cb;
+    background: #f0657e;
     color: #fff;
     font-weight: bold;
     cursor: pointer;
     transition: background 0.23s;
   }
+
+  /*마우스 커서를 버튼에 올렸을 때 바뀌는 색상 변경*/
   .msger-send-btn:hover {
     background: rgb(0, 180, 50);
   }
-  
+  /*====================================================*/  
+
   .msger-chat {
     background-color: #fcfcfe;
      }
