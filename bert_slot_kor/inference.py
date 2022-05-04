@@ -12,6 +12,7 @@ from to_array.bert_to_array import BERTToArray
 from to_array.tags_to_array import TagsToArray
 from models.bert_slot_model import BertSlotModel
 import re
+from prepare_data import process_line
 ###############################################################################
 
 import tensorflow as tf

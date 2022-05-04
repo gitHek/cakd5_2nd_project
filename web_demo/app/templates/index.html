@@ -7,10 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script type="text/javascript" nonce="7b651cbe0d9b4b979ae6b4136c0" src="//local.adguard.org?ts=1651473121615&amp;type=content-script&amp;dmn=colab.research.google.com&amp;pth=%2Ftun%2Fm%2Fgpu-t4-hm-2qysn0ntrssg8%2Ffiles%2Fcontent%2Fdrive%2FMyDrive%2FColab_Notebooks%2F2nd_project%2Fweb_demo%2Fapp%2Ftemplates%2Findex.html%3Fauthuser%3D0&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="7b651cbe0d9b4b979ae6b4136c0" src="//local.adguard.org?ts=1651473121615&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script type="text/javascript" nonce="7b651cbe0d9b4b979ae6b4136c0" src="//local.adguard.org?ts=1651473121615&amp;type=content-script&amp;dmn=colab.research.google.com&amp;pth=%2Ftun%2Fm%2Fgpu-t4-hm-2qysn0ntrssg8%2Ffiles%2Fcontent%2Fdrive%2FMyDrive%2FColab_Notebooks%2F2nd_project%2Fweb_demo%2Fapp%2Ftemplates%2Findex.html%3Fauthuser%3D0&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="7b651cbe0d9b4b979ae6b4136c0" src="//local.adguard.org?ts=1651473121615&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script type="text/javascript" nonce="7b651cbe0d9b4b979ae6b4136c0" src="//local.adguard.org?ts=1651473121615&amp;type=content-script&amp;dmn=colab.research.google.com&amp;pth=%2Ftun%2Fm%2Fgpu-t4-hm-2qysn0ntrssg8%2Ffiles%2Fcontent%2Fdrive%2FMyDrive%2FColab_Notebooks%2F2nd_project%2Fweb_demo%2Fapp%2Ftemplates%2Findex.html%3Fauthuser%3D0&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="7b651cbe0d9b4b979ae6b4136c0" src="//local.adguard.org?ts=1651473121615&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="shortcut icon" href="#" />
+  <link rel="shortcut icon" href="#" />
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
@@ -20,34 +17,22 @@
   <section class="msger">
     <header class="msger-header">
       <div class="msger-header-title">
-        </i> <b>와인 추천 챗봇</b> </i>
+        </i> <b>와인어때?</b> </i>
       </div>
     </header>
 
     <main class="msger-chat">
       <div class="msg left-msg">
-        <!-- ================= TODO : 챗봇의 프로필 사진 넣기 =================== -->
         <div class="msg-img" style="background-image: url(https://cdn-icons-png.flaticon.com/512/1432/1432235.png)"></div>
-        <!-- ================================================================ -->
         <div class="msg-bubble">
           <div class="msg-info">
-            <div class="msg-info-name">와인추천봇</div>
+            <div class="msg-info-name">오늘의와인</div>
             <div class="msg-info-time"></div>
           </div>
           <div class="msg-text">
-            안녕하세요. 와인 추천 챗봇입니다.
+            안녕하세요. 오늘의와인입니다.<br>처음이시라면 !설명을 입력해보세요.
           </div>
         </div>
-        <!-- msg-bubble div 하나 당 말풍선 하나 -->
-<!--         <div class="msg-bubble">
-          <div class="msg-info">
-            <div class="msg-info-name">와인추천봇</div>
-            <div class="msg-info-time"></div>
-          </div>
-          <div class="msg-text">
-            어떤 와인으로 추천드릴까요?
-          </div>
-        </div> -->
       </div>
 
     </main>
@@ -57,7 +42,7 @@
       <button type="submit" class="msger-send-btn">Send</button>
     </form>
   </section>
-  <!-- partial -->
+
   <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script>
 
@@ -66,12 +51,10 @@
     const msgerChat = get(".msger-chat");
 
 
-    // Icons made by Freepik from www.flaticon.com
-    // TODO : 챗봇(27번째 라인과 동일하게 설정하기)과 사용자의 프로필 사진 넣기
     const BOT_IMG = "https://cdn-icons-png.flaticon.com/512/1432/1432235.png";
     const PERSON_IMG = "https://cdn-icons-png.flaticon.com/512/265/265674.png";
-    const BOT_NAME = "와인추천봇";
-    const PERSON_NAME = "You";
+    const BOT_NAME = "오늘의와인";
+    const PERSON_NAME = "와린이";
 
     msgerForm.addEventListener("submit", event => {
       event.preventDefault();
@@ -85,7 +68,7 @@
     });
 
     function appendMessage(name, img, side, text) {
-      //   Simple solution for small apps
+
       const msgHTML = `
 <div class="msg ${side}-msg">
   <div class="msg-img" style="background-image: url(${img})"></div>
@@ -106,7 +89,7 @@
     }
 
     function appendImage(name, img, side, text, url, page_url) {
-      //   Simple solution for small apps
+
       const msgHTML = `
 <div class="msg ${side}-msg">
   <div class="msg-img" style="background-image: url(${img})"></div>
