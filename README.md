@@ -1,4 +1,5 @@
 # cakd5_2nd_project_2team
+# 와인 챗봇 개발
 
 팀장 : 권혁종  
 git : https://github.com/gitHek
